@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import app from '/.shortener';
 
 const app = express();
 const PORT = 3000;
@@ -18,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.post('/shorten', (req, res) => {
     const inputField = req.body.inputField;
-    const shortenText = Buffer.from(inputField).toString('base64');
+    const shortenText = await shorten(inputField);
     res.send(`Shorten Text: ${shortenText}`);
 });
 
