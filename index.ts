@@ -22,7 +22,12 @@ app.post('/shorten', (req, res) => {
     res.send(`Shorten Text: ${shortenText}`);
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+if(require.main === module) {
+	app.listen(PORT, () => {
+		console.log(`Server is running on port ${PORT}`);
+	});
+}
+
+export default app;
+
 

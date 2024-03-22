@@ -20,8 +20,11 @@ app.get('/', (req, res) => {
 app.post('/shorten', (req, res) => {
     const inputField = req.body.inputField;
     const shortenText = Buffer.from(inputField).toString('base64');
-    res.send(`Text: ${shortenText}`);
+    res.send(`Shorten Text: ${shortenText}`);
 });
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+exports.default = app;
