@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ioredis_1 = require("ioredis");
+var cors = require('cors');
 var express = require('express');
 var _a = require('express'), Request = _a.Request, Response = _a.Response;
 var bodyParser = require('body-parser');
@@ -45,6 +46,7 @@ var redis = new ioredis_1.default();
 var app = express();
 var PORT = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.get('/', function (req, res) {
     res.send("\n        <form action=\"/shorten\" method=\"POST\">\n            <label for=\"inputField\">Enter URL:</label>\n            <input type=\"text\" id=\"inputField\" name=\"inputField\">\n            <button type=\"submit\">Shorten</button>\n        </form>\n    ");
 });
@@ -61,7 +63,7 @@ app.get('/:shortenURL', function (req, res) { return __awaiter(void 0, void 0, v
                 return [4 /*yield*/, redis.get(shortenURL)];
             case 2:
                 valueURL = _a.sent();
-                res.redirect(valueURL);
+                res.status(200).send(valueURL);
                 return [3 /*break*/, 4];
             case 3:
                 res.status(404).send('URL not Found');
@@ -100,7 +102,7 @@ app.post('/shorten', function (req, res) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, redis.set(shortenText, inputField)];
             case 5:
                 _a.sent();
-                res.status(201).send("Shorten URL: http://short.ly/".concat(shortenText));
+                res.status(201).send("http://short.ly/".concat(shortenText));
                 return [3 /*break*/, 7];
             case 6:
                 error_1 = _a.sent();

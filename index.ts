@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+const cors = require('cors');
 const express = require('express');
 const { Request, Response } = require('express');
 const bodyParser = require('body-parser');
@@ -9,6 +10,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send(`
@@ -26,7 +28,8 @@ app.get('/:shortenURL', async (req, res) => {
 
 	if (keyExist) {
 		const valueURL = await redis.get(shortenURL);
-		res.redirect(valueURL);
+		res.status(200).send(valueURL);
+		// res.redirect(valueURL);
 	} else {
 		res.status(404).send('URL not Found');
 	}
@@ -53,7 +56,7 @@ app.post('/shorten', async (req, res) => {
 	}
 
 	await redis.set(shortenText, inputField);
-        res.status(201).send(`Shorten URL: http://short.ly/${shortenText}`);
+        res.status(201).send(`http://short.ly/${shortenText}`);
 
     } catch (error) {
 
