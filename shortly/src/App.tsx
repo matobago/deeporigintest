@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { FiLink } from 'react-icons/fi'; 
-import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-router-dom'; 
-import './App.css'; 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import UrlShorteningForm from './UrlShorteningForm'; 
 import RedirectToBackend from './RedirectToBackend';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  const [inputUrl, setInputUrl] = useState('');
   const [shortenedUrl, setShortenedUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
-  const handleShorten = async () => {
+  const handleShorten = async (inputUrl: string) => {
+	console.log("handling shorting");
+
     try {
       const response = await fetch('/shorten', {
         method: 'POST',
-        headers: {
-          'Content-Type':  'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ inputField: encodeURIComponent(inputUrl) }).toString(),
       });
 
@@ -24,8 +23,7 @@ function App() {
       }
 
       const data = await response.text();
-      const shortenedUrl = `${data}`;
-      setShortenedUrl(shortenedUrl);
+      setShortenedUrl(data);
     } catch (error) {
       console.error('Error occurred while shortening URL:', error);
     }
@@ -37,32 +35,19 @@ function App() {
   };
 
   return (
-    <Router> 
+    <Router>
       <div className="App">
-        <h1>URL Shortener <FiLink /></h1>
+        <h1>URL Shortener</h1>
         <Routes>
           <Route path="/" element={
-            <div>
-              <p>Enter the URL to shorten:</p>
-              <div className="input-container">
-                <input
-                  type="text"
-                  value={inputUrl}
-                  onChange={(e) => setInputUrl(e.target.value)}
-                  placeholder="Enter URL"
-                />
-                <button onClick={handleShorten}>Shorten</button>
-              </div>
-              {shortenedUrl && (
-                <div className="success-message">
-                  <p>Success! Here's your short URL:</p>
-                  <div className="shortened-url">{shortenedUrl}</div>
-                  <button onClick={copyToClipboard}>{copied ? 'Copied!' : 'Copy to Clipboard'}</button>
-                </div>
-              )}
-            </div>
+            <UrlShorteningForm 
+              onShorten={handleShorten} 
+              onCopy={copyToClipboard} 
+              shortenedUrl={shortenedUrl} 
+              copied={copied}
+            />
           } />
-  	  <Route path="/:shortURL" element={<RedirectToBackend />} />
+          <Route path="/:shortURL" element={<RedirectToBackend />} />
         </Routes>
       </div>
     </Router>
